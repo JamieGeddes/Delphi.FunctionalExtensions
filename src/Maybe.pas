@@ -53,7 +53,7 @@ implementation
 
 class operator Maybe<T>.Implicit(const value: T): Maybe<T>;
 begin
-  Result:= Maybe<T>.Create(value);
+  Result := Maybe<T>.Create(value);
 end;
 
 constructor Maybe<T>.Create(const value: T);
@@ -63,22 +63,22 @@ end;
 
 function Maybe<T>.From(const obj: T): Maybe<T>;
 begin
-  Result:= Maybe<T>.Create(obj);
+  Result := Maybe<T>.Create(obj);
 end;
 
 function Maybe<T>.HasValue: Boolean;
 begin
-  Result:= Assigned( _value);
+  Result := Assigned( _value);
 end;
 
 function Maybe<T>.HasNoValue: Boolean;
 begin
-  Result:= not HasValue;
+  Result := not HasValue;
 end;
 
 function Maybe<T>.GetValue: T;
 begin
-  Result:= _value;
+  Result := _value;
 end;
 
 end.
