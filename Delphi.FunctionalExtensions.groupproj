@@ -1,0 +1,36 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{683DE82D-0AB6-4370-AEC8-D07C46DBB08E}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="tests\Delphi.FunctionalExtensions.Tests.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Delphi_FunctionalExtensions_Tests">
+        <MSBuild Projects="tests\Delphi.FunctionalExtensions.Tests.dproj"/>
+    </Target>
+    <Target Name="Delphi_FunctionalExtensions_Tests:Clean">
+        <MSBuild Projects="tests\Delphi.FunctionalExtensions.Tests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Delphi_FunctionalExtensions_Tests:Make">
+        <MSBuild Projects="tests\Delphi.FunctionalExtensions.Tests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Delphi_FunctionalExtensions_Tests"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Delphi_FunctionalExtensions_Tests:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Delphi_FunctionalExtensions_Tests:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
