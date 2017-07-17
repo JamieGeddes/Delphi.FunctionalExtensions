@@ -58,6 +58,32 @@ type
   end;
 
 
+  ReturnValue<T: class> = record
+  private
+    _value: T;
+
+    _error: string;
+
+    _failure: Boolean;
+
+    function GetValue: T;
+    function GetError: string;
+
+    constructor Create(const isFailure: Boolean;
+                       const value:     T;
+                       const error:     string);
+
+  public
+    function IsSuccess: Boolean;
+    function IsFailure: Boolean;
+
+    class operator Implicit(const value: ReturnValue<T>): ReturnValue;
+
+    property Value: T read GetValue;
+
+    property Error: string read GetError;
+  end;
+
 implementation
 
 uses
@@ -123,6 +149,57 @@ begin
   Result := Ok;
 end;
 
+
+{ ReturnValue<T> }
+
+constructor ReturnValue<T>.Create(const isFailure: Boolean;
+                                  const value:     T;
+                                  const error:     string);
+begin
+  if(not isFailure) and ( value = Nil) then raise Exception.Create( 'no value assigned for success');
+
+  if(isFailure) then
+  begin
+    if(String.IsNullOrWhiteSpace(error)) then raise Exception.Create('There must be an error message for failure.');
+  end
+  else begin
+    if(not String.IsNullOrWhiteSpace(error)) then raise Exception.Create('There should be no error message for success.');
+  end;
+
+  _value := value;
+  _error := error;
+  _failure := isFailure;
+end;
+
+function ReturnValue<T>.IsSuccess: Boolean;
+begin
+  Result := not _failure;
+end;
+
+function ReturnValue<T>.IsFailure: Boolean;
+begin
+  Result := _failure;
+end;
+
+function ReturnValue<T>.GetValue: T;
+begin
+  if(not IsSuccess) then raise Exception.Create('No value for failure');
+
+  Result := _value;
+end;
+
+function ReturnValue<T>.GetError: string;
+begin
+  if(IsSuccess) then raise Exception.Create('No error message for success');
+
+  Result := _error;
+end;
+
+class operator ReturnValue<T>.Implicit(const value: ReturnValue<T>): ReturnValue;
+begin
+  if(value.IsSuccess) then Result := ReturnValue.Ok
+  else Result := ReturnValue.Fail(value.Error);
+end;
 
 end.
 
