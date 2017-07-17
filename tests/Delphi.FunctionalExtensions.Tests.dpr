@@ -42,7 +42,7 @@ uses
   DUnitX.Attributes,
   Maybe.Tests in 'Maybe.Tests.pas',
   Widget in 'Widget.pas',
-  Maybe in '..\src\Maybe.pas';
+  FunctionalExtensions.Maybe in '..\src\FunctionalExtensions.Maybe.pas';
 
 var
   runner : ITestRunner;

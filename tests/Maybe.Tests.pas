@@ -40,7 +40,7 @@ type
 implementation
 
 uses
-  Maybe,
+  FunctionalExtensions.Maybe,
   Widget;
 
 { MaybeTests }
