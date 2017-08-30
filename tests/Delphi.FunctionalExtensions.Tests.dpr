@@ -43,7 +43,7 @@ uses
   Maybe.Tests in 'Maybe.Tests.pas',
   Widget in 'Widget.pas',
   FunctionalExtensions.Maybe in '..\src\FunctionalExtensions.Maybe.pas',
-  FunctionalExtensions.ReturnValue in '..\src\FunctionalExtensions.ReturnValue.pas';
+  FunctionalExtensions.Option in '..\src\FunctionalExtensions.Option.pas';
 
 var
   runner : ITestRunner;
