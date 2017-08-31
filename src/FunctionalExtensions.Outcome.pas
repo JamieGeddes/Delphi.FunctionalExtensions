@@ -22,18 +22,18 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 }
 
-unit FunctionalExtensions.Option;
+unit FunctionalExtensions.Outcome;
 
 interface
 
 type
-  Option = record
+  Outcome = record
   private
     _isSuccess: Boolean;
 
     _error: string;
 
-    class var OkOption: Option;
+    class var OkOutcome: Outcome;
 
     constructor Create(const isSuccess: Boolean;
                        const error:     string);
@@ -46,10 +46,10 @@ type
   public
     class constructor Create;
 
-    class function Ok: Option; static;
-    class function Fail(const error: string): Option; static;
+    class function Ok: Outcome; static;
+    class function Fail(const error: string): Outcome; static;
 
-    class function FirstFailureOrSuccess(const results: array of Option): Option; static;
+    class function FirstFailureOrSuccess(const results: array of Outcome): Outcome; static;
 
     property IsSuccess: Boolean read GetIsSuccess;
     property IsFailure: Boolean read GetIsFailure;
@@ -58,7 +58,7 @@ type
   end;
 
 
-  Option<T> = record
+  Outcome<T> = record
   private
     _value: T;
 
@@ -79,12 +79,12 @@ type
     function IsSuccess: Boolean;
     function IsFailure: Boolean;
 
-    class function Ok(const value: T): Option<T>; static;
-    class function Fail(const error: string): Option<T>; static;
+    class function Ok(const value: T): Outcome<T>; static;
+    class function Fail(const error: string): Outcome<T>; static;
 
-    class operator Implicit(const value: Option<T>): Option;
+    class operator Implicit(const value: Outcome<T>): Outcome;
 
-    function OnSuccess(callback: TCallback): Option<T>;
+    function OnSuccess(callback: TCallback): Outcome<T>;
 
     property Value: T read GetValue;
 
@@ -96,15 +96,15 @@ implementation
 uses
   System.SysUtils;
 
-{ Option }
+{ Outcome }
 
-class constructor Option.Create;
+class constructor Outcome.Create;
 begin
-  OkOption := Option.Create(true, string.Empty);
+  OkOutcome := Outcome.Create(true, string.Empty);
 end;
 
-constructor Option.Create(const isSuccess: Boolean;
-                          const error:     string);
+constructor Outcome.Create(const isSuccess: Boolean;
+                           const error:     string);
 begin
   if(isSuccess and not error.IsNullOrWhiteSpace(error)) then raise Exception.Create('error string should not be set for success');
   if(not isSuccess) and (error.IsEmpty) then raise Exception.Create('error string must be specified for error cases');
@@ -113,35 +113,35 @@ begin
   _error := error;
 end;
 
-class function Option.Ok: Option;
+class function Outcome.Ok: Outcome;
 begin
-  Result := OkOption;
+  Result := OkOutcome;
 end;
 
-class function Option.Fail(const error: string): Option;
+class function Outcome.Fail(const error: string): Outcome;
 begin
-  Result := Option.Create(false, error);
+  Result := Outcome.Create(false, error);
 end;
 
-function Option.GetIsSuccess: Boolean;
+function Outcome.GetIsSuccess: Boolean;
 begin
   Result := _isSuccess;
 end;
 
-function Option.GetIsFailure: Boolean;
+function Outcome.GetIsFailure: Boolean;
 begin
   Result := not _isSuccess;
 end;
 
-function Option.GetError: string;
+function Outcome.GetError: string;
 begin
   Result := _error;
 end;
 
-class function Option.FirstFailureOrSuccess(const results: array of Option): Option;
+class function Outcome.FirstFailureOrSuccess(const results: array of Outcome): Outcome;
 var
   index: Integer;
-  resultObj: Option;
+  resultObj: Outcome;
 begin
   for Index := Low(results) to High(results) do
   begin
@@ -156,11 +156,11 @@ begin
 end;
 
 
-{ Option<T> }
+{ Outcome<T> }
 
-constructor Option<T>.Create(const isFailure: Boolean;
-                             const value:     T;
-                             const error:     string);
+constructor Outcome<T>.Create(const isFailure: Boolean;
+                              const value:     T;
+                              const error:     string);
 begin
   if(isFailure) then
   begin
@@ -175,52 +175,52 @@ begin
   _failure := isFailure;
 end;
 
-function Option<T>.IsSuccess: Boolean;
+function Outcome<T>.IsSuccess: Boolean;
 begin
   Result := not _failure;
 end;
 
-function Option<T>.IsFailure: Boolean;
+function Outcome<T>.IsFailure: Boolean;
 begin
   Result := _failure;
 end;
 
-class function Option<T>.Ok(const value: T): Option<T>;
+class function Outcome<T>.Ok(const value: T): Outcome<T>;
 begin
-  Result := Option<T>.Create(false, value, String.Empty);
+  Result := Outcome<T>.Create(false, value, String.Empty);
 end;
 
-class function Option<T>.Fail(const error: string): Option<T>;
+class function Outcome<T>.Fail(const error: string): Outcome<T>;
 begin
-  Result := Option<T>.Create(true, Default(T), error);
+  Result := Outcome<T>.Create(true, Default(T), error);
 end;
 
-function Option<T>.GetValue: T;
+function Outcome<T>.GetValue: T;
 begin
   if(not IsSuccess) then raise Exception.Create('No value for failure');
 
   Result := _value;
 end;
 
-function Option<T>.GetError: string;
+function Outcome<T>.GetError: string;
 begin
   if(IsSuccess) then raise Exception.Create('No error message for success');
 
   Result := _error;
 end;
 
-class operator Option<T>.Implicit(const value: Option<T>): Option;
+class operator Outcome<T>.Implicit(const value: Outcome<T>): Outcome;
 begin
-  if(value.IsSuccess) then Result := Option.Ok
-  else Result := Option.Fail(value.Error);
+  if(value.IsSuccess) then Result := Outcome.Ok
+  else Result := Outcome.Fail(value.Error);
 end;
 
-function Option<T>.OnSuccess(callback: TCallback): Option<T>;
+function Outcome<T>.OnSuccess(callback: TCallback): Outcome<T>;
 begin
     if( IsFailure) then
-        Result:= Option<T>.Fail(Error)
+        Result:= Outcome<T>.Fail(Error)
     else
-        Result:= Option<T>.Ok(callback( Value));
+        Result:= Outcome<T>.Ok(callback( Value));
 end;
 
 end.
