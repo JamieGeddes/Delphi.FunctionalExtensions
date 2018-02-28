@@ -107,7 +107,6 @@ constructor Outcome.Create(const isSuccess: Boolean;
                            const error:     string);
 begin
   if(isSuccess and not error.IsNullOrWhiteSpace(error)) then raise Exception.Create('error string should not be set for success');
-  if(not isSuccess) and (error.IsEmpty) then raise Exception.Create('error string must be specified for error cases');
 
   _isSuccess := isSuccess;
   _error := error;
@@ -162,11 +161,8 @@ constructor Outcome<T>.Create(const isFailure: Boolean;
                               const value:     T;
                               const error:     string);
 begin
-  if(isFailure) then
+  if(IsSuccess) then
   begin
-    if(String.IsNullOrWhiteSpace(error)) then raise Exception.Create('There must be an error message for failure.');
-  end
-  else begin
     if(not String.IsNullOrWhiteSpace(error)) then raise Exception.Create('There should be no error message for success.');
   end;
 
